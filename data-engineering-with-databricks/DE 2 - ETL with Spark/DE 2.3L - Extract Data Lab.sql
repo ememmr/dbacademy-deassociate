@@ -74,7 +74,30 @@
 
 -- COMMAND ----------
 
--- <FILL_IN> "${DA.paths.kafka_events}"
+CREATE EXTERNAL TABLE IF NOT EXISTS events_json
+ (key BINARY, offset LONG, partition INTEGER, timestamp LONG, topic STRING, value BINARY)
+USING json LOCATION '${DA.paths.kafka_events}'
+
+-- COMMAND ----------
+
+-- using a common table expression - cte
+-- WITH cte_events AS (
+--  SELECT *
+--  FROM json.`${DA.paths.kafka_events}`
+--)
+
+-- create the table separately
+CREATE OR REPLACE TABLE events_json 
+AS
+SELECT
+  CAST(key AS BINARY),
+  CAST(offset AS LONG),
+  CAST(partition AS INTEGER),
+  CAST(timestamp AS LONG),
+  CAST(topic AS STRING),
+  CAST(value AS BINARY)
+FROM json.`${DA.paths.kafka_events}`;
+
 
 -- COMMAND ----------
 

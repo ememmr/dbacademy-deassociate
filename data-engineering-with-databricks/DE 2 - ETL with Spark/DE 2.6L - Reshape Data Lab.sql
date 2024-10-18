@@ -97,11 +97,14 @@
 
 -- COMMAND ----------
 
--- CREATE OR REPLACE TEMP VIEW events_pivot
--- <FILL_IN>
--- ("cart", "pillows", "login", "main", "careers", "guest", "faq", "down", "warranty", "finalize", 
--- "register", "shipping_info", "checkout", "mattresses", "add_item", "press", "email_coupon", 
--- "cc_info", "foam", "reviews", "original", "delivery", "premium")
+ CREATE OR REPLACE TEMP VIEW events_pivot
+ AS select * from (select user_id as user, event_name from events) PIVOT (count(*) as count_event FOR event_name IN 
+ ("cart", "pillows", "login", "main", "careers", "guest", "faq", "down", "warranty", "finalize", 
+ "register", "shipping_info", "checkout", "mattresses", "add_item", "press", "email_coupon", 
+ "cc_info", "foam", "reviews", "original", "delivery", "premium")
+ );
+
+select * from events_pivot limit 10
 
 -- COMMAND ----------
 
@@ -118,11 +121,13 @@
 
 -- COMMAND ----------
 
--- MAGIC %python
--- MAGIC # TODO
--- MAGIC # (spark.read
--- MAGIC #     <FILL_IN>
--- MAGIC #     .createOrReplaceTempView("events_pivot"))
+-- MAGIC %scala
+-- MAGIC
+-- MAGIC import org.apache.spark.sql.functions._
+-- MAGIC
+-- MAGIC val df = spark.read.table("events").select("user_id","event_name").withColumnRenamed("user_id","user")
+-- MAGIC
+-- MAGIC df.groupBy("user").pivot("event_name").agg(count("*")).createOrReplaceTempView("events_pivot")
 
 -- COMMAND ----------
 
@@ -178,8 +183,12 @@
 
 -- COMMAND ----------
 
--- CREATE OR REPLACE TEMP VIEW clickpaths AS
--- <FILL_IN>
+select * from transactions limit 5
+
+-- COMMAND ----------
+
+ CREATE OR REPLACE TEMP VIEW clickpaths 
+ AS (select * from transactions join events_pivot on transactions.user_id = events_pivot.user);)
 
 -- COMMAND ----------
 
@@ -195,11 +204,11 @@
 
 -- COMMAND ----------
 
--- MAGIC %python
--- MAGIC # TODO
--- MAGIC # (spark.read
--- MAGIC #     <FILL_IN>
--- MAGIC #     .createOrReplaceTempView("clickpaths"))
+-- MAGIC %scala
+-- MAGIC  val trans = spark.read.table("transactions")
+-- MAGIC  val events = spark.read.table("events_pivot")
+-- MAGIC  
+-- MAGIC trans.join(events,trans("user_id") === events("user"), "inner").createOrReplaceTempView("clickpaths")
 
 -- COMMAND ----------
 
@@ -224,6 +233,10 @@
 
 -- MAGIC %python
 -- MAGIC DA.cleanup()
+
+-- COMMAND ----------
+
+
 
 -- COMMAND ----------
 

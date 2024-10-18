@@ -41,6 +41,10 @@
 
 -- COMMAND ----------
 
+select current_schema()
+
+-- COMMAND ----------
+
 SELECT * FROM silver.heartrate_device
 
 -- COMMAND ----------

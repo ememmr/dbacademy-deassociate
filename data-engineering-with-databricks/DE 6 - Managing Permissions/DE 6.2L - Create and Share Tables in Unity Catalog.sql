@@ -29,6 +29,11 @@
 
 -- COMMAND ----------
 
+show catalogs;
+create catalog eme_martinez_murga_tdl5_da;
+
+-- COMMAND ----------
+
 -- MAGIC %run ./Includes/Classroom-Setup-06.2
 
 -- COMMAND ----------
@@ -138,7 +143,7 @@ SELECT * FROM patient_gold.heartrate_stats;
 
 -- COMMAND ----------
 
--- GRANT SELECT ON TABLE patient_gold.heartrate_stats to `account users`
+ GRANT SELECT ON TABLE patient_gold.heartrate_stats to `account users`
 
 -- COMMAND ----------
 

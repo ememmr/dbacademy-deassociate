@@ -251,6 +251,10 @@ SELECT * FROM item_purchases
 
 -- COMMAND ----------
 
+SELECT * FROM item_purchases LIMIT 3
+
+-- COMMAND ----------
+
 SELECT *
 FROM item_purchases
 PIVOT (
